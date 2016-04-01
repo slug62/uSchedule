@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
@@ -11,6 +13,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import uscheduler.externaldata.HTMLFormatException;
+import uscheduler.internaldata.Terms;
+import uscheduler.util.Importer;
 
 import java.util.ArrayList;
 
@@ -36,6 +41,7 @@ public class Controller implements Initializable {
     private TopHBox top = new TopHBox();
     private ObservableList<HBox> hBoxList = FXCollections.observableArrayList();
     private ArrayList<CourseHBox> hBoxes = new ArrayList<>();
+    private ArrayList<Terms.Term> terms = new ArrayList<>();
 
     private InternalDataManager idb = new InternalDataManager();
 
@@ -104,6 +110,18 @@ public class Controller implements Initializable {
         }
     }
     private void getTerms(){
+        try {
+            Importer.loadTerms();
+        }catch (HTMLFormatException e){
+            Popup.display(Alert.AlertType.ERROR, "HTMLFormatException", "It appears that KSU has changed their courses page." +
+                    "There is a chance the data collected is corrupt, please contact uscheduler team for resolution.");
+        }catch (IOException e){
+            Popup.display(Alert.AlertType.ERROR, "IOException", "Looks like you do not have Internet Connectivity." +
+                    "Please fix then relaunch the application");
+        }
+        terms.addAll(Terms.getAll(Terms.PK_DESC));
+        top.setTerms(terms);
+
         //terms.addAll(idb.getOpenTerms());
         Term testTerm = new Term();
         testTerm.setTerm(20160106, "Spring 2016");
