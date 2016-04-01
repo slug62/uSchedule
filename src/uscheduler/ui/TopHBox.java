@@ -9,7 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import uscheduler.internaldata.Campuses;
 import uscheduler.internaldata.Terms;
-
 import java.util.ArrayList;
 
 /**
